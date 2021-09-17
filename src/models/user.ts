@@ -17,7 +17,6 @@ export interface UserModel {
 }
 
 //On save hook, encrypt password
-
 //Before saving the model run this function
 userSchema.pre('save', function (next) {
     //The context is the user model, you have to use a plain function like you would in a class.

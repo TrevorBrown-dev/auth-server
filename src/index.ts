@@ -4,8 +4,6 @@ import { json } from 'body-parser';
 import morgan from 'morgan';
 import { router } from './router';
 import { connect } from 'mongoose';
-import * as dotenv from 'dotenv';
-dotenv.config();
 //App Setup
 const app = express();
 app.use(json({ type: '*/*' }));

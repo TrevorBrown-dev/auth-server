@@ -27,17 +27,21 @@ export const jwtLogin = new JwtStrategy(jwtOptions, (payload, done) => {
 const localOptions: IStrategyOptions = {
     usernameField: 'email',
 };
+
 export const localLogin = new LocalStrategy(localOptions, (email, password, done) => {
     //Verify this username and password, call done with the email and pass is correct
     //Otherwise, call done with false
     userModel.findOne({ email }, (err: Error, user: any | null) => {
+        //We return done when we want to break out of the function.
         if (err) return done(err, false);
         if (!user) return done(null, false);
 
         //compare password - is 'password' equal to user.password?
         user.comparePassword(password, (err: Error, isMatch: boolean) => {
+            //If there's no password match return false
             if (!isMatch) return done(null, false);
 
+            //Otherwise return the user object
             return done(null, user);
         });
     });
