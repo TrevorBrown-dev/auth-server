@@ -2,12 +2,6 @@ import { RequestHandler } from 'express';
 import { config } from '../env';
 import * as jwt from 'jwt-simple';
 import { UserModel, userModel } from '../models/user';
-import { encrypt } from '../crypto/encrypt';
-import { decrypt } from '../crypto/decrypt';
-const ciphertext = encrypt('Hi friend');
-console.log(ciphertext);
-
-console.log(decrypt(ciphertext));
 
 const tokenForUser = (user: any) => {
     const timestamp = Date.now();
