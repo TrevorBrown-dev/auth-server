@@ -5,8 +5,8 @@ import morgan from 'morgan';
 import { router } from './router';
 import { connect } from 'mongoose';
 import cors from 'cors';
+import { sendEmail } from './mail/sendEmail';
 //App Setup
-
 const app = express();
 app.use(cors());
 app.use(json({ type: '*/*' }));

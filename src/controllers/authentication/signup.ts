@@ -1,18 +1,6 @@
 import { RequestHandler } from 'express';
-import { config } from '../env';
-import * as jwt from 'jwt-simple';
-import { UserModel, userModel } from '../models/user';
-
-const tokenForUser = (user: any) => {
-    const timestamp = Date.now();
-    return jwt.encode(
-        {
-            sub: user.id,
-            iat: timestamp,
-        },
-        config.JWT_SECRET as string
-    );
-};
+import { encryptJwt } from '../../crypto';
+import { userModel, UserModel } from '../../models/user';
 
 export const signup: RequestHandler = (req, res, next) => {
     const { email, password } = req.body;
@@ -42,17 +30,11 @@ export const signup: RequestHandler = (req, res, next) => {
                 .then(() => {
                     //We need to give some token
                     //Respond to request
-                    res.json({ token: tokenForUser(user) });
+                    res.json({ token: encryptJwt(user) });
                 })
                 .catch((err) => {
                     return next(err);
                 });
         }
     );
-};
-
-export const signin: RequestHandler = (req, res, next) => {
-    //User has had their email and password authed at this point.
-    //We just need to give them a token
-    if (req.user) res.send({ token: tokenForUser(req.user) });
 };

@@ -1,5 +1,7 @@
 import { Schema, model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
+import { randomString } from '../crypto/randomString';
+import { pendingUserModel } from './pendingUser';
 //Define the model
 
 const userSchema = new Schema({
@@ -9,11 +11,16 @@ const userSchema = new Schema({
         lowercase: true,
     },
     password: String,
+    active: {
+        type: Boolean,
+        default: false,
+    },
 });
 export interface UserModel {
     id: string;
     email: string;
     password: string;
+    active: boolean;
 }
 
 //On save hook, encrypt password
@@ -21,6 +28,11 @@ export interface UserModel {
 userSchema.pre('save', function (next) {
     //The context is the user model, you have to use a plain function like you would in a class.
     const user = this;
+    const pendingUser = new pendingUserModel({
+        uid: user._id,
+        email: user.email,
+    });
+    pendingUser.save();
 
     //Generaete a salt
     bcrypt.genSalt(10, (err, salt) => {

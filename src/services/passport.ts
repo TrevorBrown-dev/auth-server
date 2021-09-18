@@ -16,7 +16,8 @@ export const jwtLogin = new JwtStrategy(jwtOptions, (payload, done) => {
     userModel.findById(payload.sub as string, (err: Error, user: UserModel) => {
         if (err) return done(err, false);
         if (user) {
-            done(null, user);
+            if (user.active) done(null, user);
+            else done(null, false);
         } else {
             done(null, false);
         }
