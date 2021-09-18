@@ -2,6 +2,12 @@ import { RequestHandler } from 'express';
 import { config } from '../env';
 import * as jwt from 'jwt-simple';
 import { UserModel, userModel } from '../models/user';
+import { encrypt } from '../crypto/encrypt';
+import { decrypt } from '../crypto/decrypt';
+const ciphertext = encrypt('Hi friend');
+console.log(ciphertext);
+
+console.log(decrypt(ciphertext));
 
 const tokenForUser = (user: any) => {
     const timestamp = Date.now();
@@ -15,13 +21,14 @@ const tokenForUser = (user: any) => {
 };
 
 export const signup: RequestHandler = (req, res, next) => {
-    if (!req.body?.email || !req.body?.password) {
+    const { email, password } = req.body;
+    if (!email || !password) {
         res.status(422);
         res.send({
             error: 'You must provide an email and password!',
         });
+        return;
     }
-    const { email, password } = req.body;
     //See if a user with a given email exists
     userModel.findOne(
         {
@@ -30,7 +37,7 @@ export const signup: RequestHandler = (req, res, next) => {
         (err: any, existingUser: UserModel) => {
             if (err) return next(err);
             //If user exists, return an error
-            if (existingUser) return res.status(422).send({ error: 'Email is in use' });
+            if (existingUser) return res.status(422).send({ error: 'Email is in use!' });
 
             //If it does not exist, create and save user record!
             const user = new userModel({
