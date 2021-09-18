@@ -1,6 +1,7 @@
 import Crypto from 'crypto';
 
-export const randomString = (size = 21) => {
-    const string = Crypto.randomBytes(size).toString('base64').slice(0, size);
-    return encodeURI(string);
+export const randomString = (size = 64) => {
+    const str = Crypto.randomBytes(size).toString('hex');
+    console.log(str);
+    return str;
 };

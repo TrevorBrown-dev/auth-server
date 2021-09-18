@@ -8,7 +8,7 @@ const requreSignin = passport.authenticate(localLogin, { session: false });
 router.post('/signin', requreSignin, signin);
 router.post('/signup', signup);
 
-router.get('/verify/:hash', (req, res, next) => verify(req, res, next));
+router.get('/verify/:hash', verify);
 
 router.get('/user', requireAuth, (req, res) => {
     console.log(req.user);

@@ -3,27 +3,31 @@ import { pendingUserModel } from '../../models/pendingUser';
 import { userModel } from '../../models/user';
 
 export const verify: RequestHandler = (req, res, next) => {
-    (async () => {
-        const { hash } = req.params;
-        //verify hash
-        try {
-            const pendingUser = await pendingUserModel.findOne({ hash });
+    const { hash } = req.params;
+    //verify hash
+    pendingUserModel
+        .findOne({ hash })
+        .then((pendingUser) => {
             if (pendingUser) {
                 //Find him in the user db
-                const user = await userModel.findOne({ _id: pendingUser.uid });
-                //We've found that user's uid
-                if (user) {
-                    //Set him to be active
-                    user.active = true;
-                    //delete the pendingUser
-                    pendingUser.delete();
-                    return res.redirect('http://localhost:3000/signin');
-                }
+                userModel
+                    .updateOne(
+                        { _id: pendingUser.uid },
+                        {
+                            active: true,
+                        }
+                    )
+                    .then((user) => {
+                        //We've found that user's uid
+                        if (user) {
+                            //Set him to be active
+                            //delete the pendingUser
+                            pendingUser.delete();
+                            res.redirect('http://localhost:3000/signin');
+                        }
+                    })
+                    .catch((e) => res.send('Something went wrong :('));
             }
-        } catch (e) {
-            res.send('Something went wrong :(');
-            throw e;
-        }
-        res.redirect('http://localhost:3000/');
-    })();
+        })
+        .catch((e) => res.send('Something went wrong :('));
 };

@@ -6,6 +6,7 @@ import { router } from './router';
 import { connect } from 'mongoose';
 import cors from 'cors';
 import { sendEmail } from './mail/sendEmail';
+import { pendingUserModel } from './models/pendingUser';
 //App Setup
 const app = express();
 app.use(cors());
